@@ -1,0 +1,111 @@
+array(45) {
+  'response_headers' =>
+  array(0) {
+}
+'http_code' =>
+int(0)
+'error' =>
+NULL
+'canceled' =>
+bool(false)
+'http_method' =>
+string(3) "GET"
+'user_data' =>
+NULL
+'start_time' =>
+double(1605546274.3192)
+'pause_handler' =>
+class Closure#249 (2) {
+public $static =>
+array(3) {
+'ch' =>
+resource(474) of type (curl)
+'multi' =>
+class Symfony\Component\HttpClient\Internal\CurlClientState#102 (7) {
+...
+}
+'execCounter' =>
+int(-9223372036854775808)
+}
+public $parameter =>
+array(1) {
+'$duration' =>
+string(10) "<required>"
+}
+}
+'url' =>
+string(96) "http://api.openweathermap.org/data/2.5/weather?id=2964574&appid=aba6f8292eed9fbc0ff3692d478902fa"
+'content_type' =>
+NULL
+'header_size' =>
+int(0)
+'request_size' =>
+int(0)
+'filetime' =>
+int(-1)
+'ssl_verify_result' =>
+int(0)
+'redirect_count' =>
+int(0)
+'total_time' =>
+double(0)
+'namelookup_time' =>
+double(0)
+'connect_time' =>
+double(0)
+'pretransfer_time' =>
+double(0)
+'size_upload' =>
+double(0)
+'size_download' =>
+double(0)
+'speed_download' =>
+double(0)
+'speed_upload' =>
+double(0)
+'download_content_length' =>
+double(-1)
+'upload_content_length' =>
+double(-1)
+'starttransfer_time' =>
+double(0)
+'redirect_time' =>
+double(0)
+'redirect_url' =>
+NULL
+'primary_ip' =>
+string(0) ""
+'certinfo' =>
+array(0) {
+}
+'primary_port' =>
+int(0)
+'local_ip' =>
+string(0) ""
+'local_port' =>
+int(0)
+'http_version' =>
+int(0)
+'protocol' =>
+int(0)
+'ssl_verifyresult' =>
+int(0)
+'scheme' =>
+string(0) ""
+'appconnect_time_us' =>
+int(0)
+'connect_time_us' =>
+int(0)
+'namelookup_time_us' =>
+int(0)
+'pretransfer_time_us' =>
+int(0)
+'redirect_time_us' =>
+int(0)
+'starttransfer_time_us' =>
+int(0)
+'total_time_us' =>
+int(0)
+'debug' =>
+string(0) ""
+}

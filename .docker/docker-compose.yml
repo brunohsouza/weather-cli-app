@@ -1,0 +1,35 @@
+version: "3.2"
+services:
+  php:
+    build: './php/'
+    networks:
+    - backend
+    volumes:
+    - /var/www/html/weather-app/:/var/www/html/weather-app/
+  apache:
+    build: './apache/'
+    depends_on:
+      - php
+    networks:
+      - backend
+    ports:
+      - "8089:80"
+    volumes:
+      - /var/www/html/weather-app/:/var/www/html/weather-app/
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: bruno
+      POSTGRES_PASSWORD: symfony
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+networks:
+  backend:
+
+
