@@ -124,6 +124,3 @@ application's root folder in a terminal:
 ```
 ./vendor/bin/phpunit
 ```
-
-   
->>>>>>> 7c0be33 (Initial commit)
