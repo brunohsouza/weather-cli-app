@@ -7,7 +7,6 @@ namespace App\Service;
 
 use App\Entity\Country;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -26,42 +25,39 @@ class CountryService
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
-    private LoggerInterface $logger;
 
-    public function __construct(HttpClientInterface $apifirst, EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(
+        HttpClientInterface $apifirst,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->client = $apifirst;
         $this->entityManager = $entityManager;
-        $this->logger = $logger;
     }
 
     public function getCountryList(): ?string
     {
-        $startTime = microtime(true);
         try {
             $response = $this->client->request(
                 'GET',
                 '/data/v1/countries',
                 [
                     'query' => [
-                        'access' => 'full',
-                        'limit' => 251
+                        'pretty' => true,
+                        'limit' => 251,
                     ]
                 ]
             );
 
-            $endtime = microtime(true);
-            echo 'process time:', $endtime - $startTime . PHP_EOL;
-
             return $response->getContent();
-        } catch (ClientExceptionInterface $e) {
-            throw $e;
-        } catch (RedirectionExceptionInterface $e) {
-            throw $e;
-        } catch (ServerExceptionInterface $e) {
-            throw $e;
-        } catch (TransportExceptionInterface $e) {
-            throw $e;
+        } catch (ClientExceptionInterface $clientException) {
+            throw $clientException;
+        } catch (RedirectionExceptionInterface $redirectionException) {
+            throw $redirectionException;
+        } catch (ServerExceptionInterface $serverException) {
+            throw $serverException;
+        } catch (TransportExceptionInterface $transportException) {
+            throw $transportException;
         }
     }
 
@@ -70,7 +66,7 @@ class CountryService
         return $this->entityManager->getRepository(Country::class)->findOneBy(['acronyms' => $acronym]);
     }
 
-    public function getCountryByAcronym(string $countryAbbreviation)
+    public function getCountryByUserInfo(string $countryInfo): string
     {
         try {
             $response = $this->client->request(
@@ -78,20 +74,21 @@ class CountryService
                 '/data/v1/countries',
                 [
                     'query' => [
-                        'abbreviation' => $countryAbbreviation
+                        'q' => $countryInfo,
+                        'pretty' => true
                     ]
                 ]
             );
 
-            return $response->toArray();
-        } catch (ClientExceptionInterface $e) {
-            throw $e;
-        } catch (RedirectionExceptionInterface $e) {
-            throw $e;
-        } catch (ServerExceptionInterface $e) {
-            throw $e;
-        } catch (TransportExceptionInterface $e) {
-            throw $e;
+            return $response->getContent();
+        } catch (ClientExceptionInterface $clientException) {
+            throw $clientException;
+        } catch (RedirectionExceptionInterface $redirectionException) {
+            throw $redirectionException;
+        } catch (ServerExceptionInterface $serverException) {
+            throw $serverException;
+        } catch (TransportExceptionInterface $transportException) {
+            throw $transportException;
         }
     }
 

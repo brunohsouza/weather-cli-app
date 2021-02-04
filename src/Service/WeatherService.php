@@ -5,8 +5,6 @@ namespace App\Service;
 use App\Entity\City;
 use App\Entity\Weather;
 use Doctrine\ORM\EntityManagerInterface;
-use JsonMachine\JsonMachine;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -44,21 +42,19 @@ class WeatherService
         HttpClientInterface $openweather,
         TemperatureService $temperatureService,
         CityService $cityService,
-        LoggerInterface $logger,
         string $openweathermap_id,
         EntityManagerInterface $entityManager
     ) {
         $this->client = $openweather;
         $this->tempService = $temperatureService;
         $this->cityService = $cityService;
-        $this->logger = $logger;
         $this->openweathermap_id = $openweathermap_id;
         $this->entityManager = $entityManager;
     }
 
-    private function create(array $weatherData, City $city): Weather
+    private function create(array $weatherData, City $city, ?string $degreesMeasure = null): Weather
     {
-        $temp = $this->tempService->create($weatherData);
+        $temp = $this->tempService->create($weatherData, $degreesMeasure);
 
         $weather = $this->entityManager->getRepository(Weather::class)->findOneBy(['city' => $city]);
         if (empty($weather)) {
@@ -81,12 +77,11 @@ class WeatherService
      * @return \stdClass
      * @throws \Exception
      */
-    public function getWeatherByCity(string $cityName): Weather
+    public function getWeatherByCity(string $cityName, ?string $degreesMeasure = null): Weather
     {
         $city = $this->getCityData($cityName);
 
-
-        return $this->create($this->getWeatherFromApi($city->getId()), $city);
+        return $this->create($this->getWeatherFromApi($city->getId()), $city, $degreesMeasure);
     }
 
     /**
@@ -123,48 +118,15 @@ class WeatherService
                 [
                     'query' => [
                         'id' => $cityId,
-                        'appid' => $this->openweathermap_id
                     ],
                     'timeout' => 5.0,
-                    'extra' => [
-                        'curl' => [
-                            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V6
-                        ]
-                    ]
                 ]
             );
 
             return $response->toArray();
-        } catch (ClientExceptionInterface $e) {
-            $this->logger->error($e->getMessage(), $e->getResponse()->toArray());
-        } catch (RedirectionExceptionInterface $e) {
-            $this->logger->warning($e->getMessage(), $e->getResponse()->toArray());
-        } catch (ServerExceptionInterface $e) {
-            $this->logger->error($e->getMessage(), [
-                'status' => $e->getResponse()->getStatusCode(),
-                'content' => $e->getResponse()->toArray(),
-                'info' => $e->getResponse()->getInfo()
-            ]);
-        } catch (TransportExceptionInterface $e) {
-            // we do not have response in this case as should be a network issue
-            $this->logger->error($e->getMessage());
+        } catch (\Exception $e) {
+            throw $e;
         }
 
-    }
-
-    /**
-     * Method to get the overall information like weather description and humidity
-     * @param $weatherData
-     * @return \stdClass
-     */
-    public function getMeaningInformation($weatherData) :\stdClass
-    {
-        $weather = new \stdClass();
-        foreach ($weatherData->weather as $key => $desc) {
-            $weather->desc[$key] = $desc->main;
-        }
-        $weather->desc = implode(', ', $weather->desc);
-        $weather->humidity = $weatherData->main->humidity;
-        return $weather;
     }
 }

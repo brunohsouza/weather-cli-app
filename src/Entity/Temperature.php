@@ -15,32 +15,37 @@ class Temperature
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $realtime;
+    private float $realtime;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $min;
+    private float $min;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $max;
+    private float $max;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $feelsLike;
+    private float $feelsLike;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $humidity;
+    private int $humidity;
+
+    /**
+     * @ORM\Column(type="string", nullable=false, options={"default": "Celsius"})
+     */
+    private string $measure;
 
     public function getId(): ?int
     {
@@ -104,6 +109,24 @@ class Temperature
     {
         $this->humidity = $humidity;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMeasure(): string
+    {
+        return $this->measure;
+    }
+
+    /**
+     * @param string $measure
+     * @return Temperature
+     */
+    public function setMeasure(string $measure): Temperature
+    {
+        $this->measure = $measure;
         return $this;
     }
 }

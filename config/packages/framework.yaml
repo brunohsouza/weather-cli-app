@@ -1,7 +1,8 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     http_client:
-        http_version: '2.0'
+        default_options:
+            http_version: '2.0'
         scoped_clients:
             # only requests matching scope will use these options
             openweather:
